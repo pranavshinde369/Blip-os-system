@@ -3,6 +3,8 @@ import pyperclip
 import sys
 import os
 
+from utils.logger import log_incident
+
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from core.patterns import scan_text
@@ -38,14 +40,18 @@ def start_monitoring():
                         pyperclip.copy("") 
                         user_action[0] = "BLOCKED"
                         notification.notify(title="Blip", message="Blocked.", timeout=2)
+                        log_incident(threat['type'], threat['description'], "BLOCKED") # <--- NEW
+                        notification.notify(title="Blip", message="Blocked.", timeout=2)
 
                     def on_allow():
                         print("✅ ALLOWED")
                         user_action[0] = "ALLOWED"
+                        log_incident(threat['type'], threat['description'], "ALLOWED") # <--- NEW
 
                     def on_sanitize():
                         print("✨ SANITIZING...")
                         notification.notify(title="Blip AI", message="Sanitizing text...", timeout=2)
+                        log_incident(threat['type'], threat['description'], "SANITIZED") # <
                         
                         # 1. Call AI
                         clean_text = sanitize_text(current_paste)
