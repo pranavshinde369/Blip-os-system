@@ -13,7 +13,7 @@ class WarningPopup(ctk.CTk):
 
         # Window Setup
         self.title("Blip Security Alert")
-        self.geometry("450x300") # Made slightly taller for 3 buttons
+        self.geometry("450x300")
         self.resizable(False, False)
         self.attributes("-topmost", True)
         self.lift()
@@ -45,65 +45,52 @@ class WarningPopup(ctk.CTk):
         )
         self.info_label.pack(pady=10)
 
-        # 3. Actions (The 3 Buttons)
+        # 3. Actions
         self.actions = ctk.CTkFrame(self, height=100, fg_color="transparent")
         self.actions.pack(fill="x", side="bottom", pady=20, padx=20)
 
-        # Button 1: SANITIZE (The Hero Feature)
         self.btn_sanitize = ctk.CTkButton(
-            self.actions,
-            text="✨ SANITIZE & PASTE",
-            fg_color="#3b82f6", # Blue
-            hover_color="#2563eb",
-            font=("Arial", 12, "bold"),
-            command=self.sanitize_action,
-            width=410
+            self.actions, text="✨ SANITIZE & PASTE", fg_color="#3b82f6", hover_color="#2563eb",
+            font=("Arial", 12, "bold"), command=self.sanitize_action, width=410
         )
         self.btn_sanitize.pack(side="top", pady=(0, 10))
 
-        # Bottom Row Container
         self.bottom_row = ctk.CTkFrame(self.actions, fg_color="transparent")
         self.bottom_row.pack(side="top", fill="x")
 
-        # Button 2: BLOCK
         self.btn_cancel = ctk.CTkButton(
-            self.bottom_row,
-            text="BLOCK",
-            fg_color="#ef4444", # Red
-            hover_color="#b91c1c",
-            font=("Arial", 12, "bold"),
-            command=self.block_action,
-            width=195
+            self.bottom_row, text="BLOCK", fg_color="#ef4444", hover_color="#b91c1c",
+            font=("Arial", 12, "bold"), command=self.block_action, width=195
         )
         self.btn_cancel.pack(side="left")
 
-        # Button 3: ALLOW
         self.btn_allow = ctk.CTkButton(
-            self.bottom_row,
-            text="ALLOW",
-            fg_color="transparent",
-            border_width=1,
-            border_color="#94a3b8",
-            text_color="#94a3b8",
-            hover_color="#334155",
-            font=("Arial", 12),
-            command=self.allow_action,
-            width=195
+            self.bottom_row, text="ALLOW", fg_color="transparent", border_width=1,
+            border_color="#94a3b8", text_color="#94a3b8", hover_color="#334155",
+            font=("Arial", 12), command=self.allow_action, width=195
         )
         self.btn_allow.pack(side="right")
 
+    def _close(self):
+        """Helper to close cleanly"""
+        self.quit()   # Stop the mainloop first
+        self.destroy() # Then kill the window
+
     def block_action(self):
         self.on_block_callback()
-        self.destroy()
+        self._close()
 
     def allow_action(self):
         self.on_allow_callback()
-        self.destroy()
+        self._close()
         
     def sanitize_action(self):
         self.on_sanitize_callback()
-        self.destroy()
+        self._close()
 
 def show_alert(threat_type, threat_desc, on_allow, on_block, on_sanitize):
     app = WarningPopup(threat_type, threat_desc, on_allow, on_block, on_sanitize)
-    app.mainloop()
+    try:
+        app.mainloop()
+    except KeyboardInterrupt:
+        app.destroy()

@@ -3,17 +3,20 @@ import pyperclip
 import sys
 import os
 
-from utils.logger import log_incident
-
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 from core.patterns import scan_text
 from core.ai_engine import sanitize_text
+from core.rag_engine import get_rag_engine # <--- NEW IMPORT
 from ui.popup import show_alert
 from plyer import notification
+from utils.logger import log_incident
 
 def start_monitoring():
     print("🛡️  Blip Endpoint Sentinel Active... (Press Ctrl+C to Stop)")
+    
+    # Initialize RAG Engine on Startup (Takes 2-3 seconds to load model)
+    rag = get_rag_engine() 
     
     last_paste = ""
     
@@ -27,42 +30,45 @@ def start_monitoring():
             if current_paste != last_paste and current_paste.strip() != "":
                 
                 last_paste = current_paste
+                
+                # --- CHECK 1: Fast Regex (Identity/Keys) ---
                 threat = scan_text(current_paste)
                 
+                # --- CHECK 2: Enterprise RAG (Code Leakage) ---
+                if not threat:
+                    is_leak, reason = rag.check_for_leaks(current_paste)
+                    if is_leak:
+                        threat = {
+                            "type": "🚫 PROPRIETARY CODE LEAK",
+                            "description": reason,
+                            "risk_level": "CRITICAL"
+                        }
+
                 if threat:
                     print(f"⚠️  THREAT DETECTED: {threat['type']}")
                     
                     user_action = ["PENDING"] 
 
-                    # --- HANDLERS ---
                     def on_block():
                         print("❌ BLOCKED")
                         pyperclip.copy("") 
                         user_action[0] = "BLOCKED"
-                        notification.notify(title="Blip", message="Blocked.", timeout=2)
-                        log_incident(threat['type'], threat['description'], "BLOCKED") # <--- NEW
-                        notification.notify(title="Blip", message="Blocked.", timeout=2)
+                        log_incident(threat['type'], threat['description'], "BLOCKED")
+                        notification.notify(title="Blip", message="Blocked by Enterprise Policy.", timeout=2)
 
                     def on_allow():
                         print("✅ ALLOWED")
                         user_action[0] = "ALLOWED"
-                        log_incident(threat['type'], threat['description'], "ALLOWED") # <--- NEW
+                        log_incident(threat['type'], threat['description'], "ALLOWED")
 
                     def on_sanitize():
                         print("✨ SANITIZING...")
                         notification.notify(title="Blip AI", message="Sanitizing text...", timeout=2)
-                        log_incident(threat['type'], threat['description'], "SANITIZED") # <
-                        
-                        # 1. Call AI
                         clean_text = sanitize_text(current_paste)
-                        
-                        # 2. Update Clipboard
                         pyperclip.copy(clean_text)
-                        
-                        # 3. Update Memory so we don't re-flag the clean text
                         user_action[0] = "SANITIZED"
-                        
-                        notification.notify(title="Blip AI", message="Text Sanitized & Ready to Paste!", timeout=3)
+                        log_incident(threat['type'], threat['description'], "SANITIZED")
+                        notification.notify(title="Blip AI", message="Text Sanitized!", timeout=3)
 
                     # --- SHOW POPUP ---
                     show_alert(
@@ -73,13 +79,11 @@ def start_monitoring():
                         on_sanitize=on_sanitize
                     )
                     
-                    # --- MEMORY RESET FIX ---
-                    # If we blocked OR sanitized, we must allow the user to copy the same thing again if they really want to.
-                    # But if they sanitized, 'last_paste' is now the clean text (handled by OS clipboard update).
+                    # Memory Reset Logic
                     if user_action[0] == "BLOCKED":
                         last_paste = ""
                     elif user_action[0] == "SANITIZED":
-                        last_paste = pyperclip.paste() # Update memory to the new clean text
+                        last_paste = pyperclip.paste()
 
             time.sleep(0.5)
 

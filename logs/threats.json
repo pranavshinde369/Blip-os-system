@@ -1,0 +1,14 @@
+[
+    {
+        "timestamp": "2026-02-13 01:17:34",
+        "threat_type": "Aadhaar Number",
+        "description": "Indian National ID (UIDAI)",
+        "action_taken": "SANITIZED"
+    },
+    {
+        "timestamp": "2026-02-13 01:35:52",
+        "threat_type": "\ud83d\udeab PROPRIETARY CODE LEAK",
+        "description": "Matches Internal Codebase (Dist: 0.00)\nRef: \n            class InternalAuth:\n                S...",
+        "action_taken": "SANITIZED"
+    }
+]
