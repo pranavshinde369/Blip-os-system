@@ -1,46 +1,80 @@
 import time
 import pyperclip
-from patterns import scan_text
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
+from core.patterns import scan_text
+from core.ai_engine import sanitize_text
+from ui.popup import show_alert
 from plyer import notification
 
 def start_monitoring():
-    """
-    Main loop that monitors the system clipboard for sensitive data.
-    """
     print("🛡️  Blip Endpoint Sentinel Active... (Press Ctrl+C to Stop)")
     
     last_paste = ""
     
     try:
         while True:
-            # 1. Get current clipboard content
             try:
                 current_paste = pyperclip.paste()
-            except Exception:
-                current_paste = "" # Handle clipboard access errors gracefully
+            except:
+                current_paste = "" 
 
-            # 2. Only process if content changed & isn't empty
             if current_paste != last_paste and current_paste.strip() != "":
-                last_paste = current_paste
                 
-                # 3. SCAN for Threats (Standard Mode)
+                last_paste = current_paste
                 threat = scan_text(current_paste)
                 
                 if threat:
-                    print(f"⚠️  THREAT DETECTED: {threat['type']} ({threat['description']})")
+                    print(f"⚠️  THREAT DETECTED: {threat['type']}")
                     
-                    # --- ACTION: WIPE CLIPBOARD ---
-                    pyperclip.copy("") 
-                    
-                    # --- ACTION: NOTIFY USER ---
-                    notification.notify(
-                        title="Blip Security Alert",
-                        message=f"Blocked: {threat['type']} detected on clipboard.",
-                        app_name="Blip Sentinel",
-                        timeout=5
+                    user_action = ["PENDING"] 
+
+                    # --- HANDLERS ---
+                    def on_block():
+                        print("❌ BLOCKED")
+                        pyperclip.copy("") 
+                        user_action[0] = "BLOCKED"
+                        notification.notify(title="Blip", message="Blocked.", timeout=2)
+
+                    def on_allow():
+                        print("✅ ALLOWED")
+                        user_action[0] = "ALLOWED"
+
+                    def on_sanitize():
+                        print("✨ SANITIZING...")
+                        notification.notify(title="Blip AI", message="Sanitizing text...", timeout=2)
+                        
+                        # 1. Call AI
+                        clean_text = sanitize_text(current_paste)
+                        
+                        # 2. Update Clipboard
+                        pyperclip.copy(clean_text)
+                        
+                        # 3. Update Memory so we don't re-flag the clean text
+                        user_action[0] = "SANITIZED"
+                        
+                        notification.notify(title="Blip AI", message="Text Sanitized & Ready to Paste!", timeout=3)
+
+                    # --- SHOW POPUP ---
+                    show_alert(
+                        threat_type=threat['type'],
+                        threat_desc=threat['description'],
+                        on_allow=on_allow,
+                        on_block=on_block,
+                        on_sanitize=on_sanitize
                     )
                     
-            # 4. Sleep to prevent high CPU usage
+                    # --- MEMORY RESET FIX ---
+                    # If we blocked OR sanitized, we must allow the user to copy the same thing again if they really want to.
+                    # But if they sanitized, 'last_paste' is now the clean text (handled by OS clipboard update).
+                    if user_action[0] == "BLOCKED":
+                        last_paste = ""
+                    elif user_action[0] == "SANITIZED":
+                        last_paste = pyperclip.paste() # Update memory to the new clean text
+
             time.sleep(0.5)
 
     except KeyboardInterrupt:
