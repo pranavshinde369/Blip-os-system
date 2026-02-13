@@ -1,0 +1,20 @@
+{
+  "name": "Default Blip Policy",
+  "description": "Built-in default that mirrors hard-coded behavior.",
+  "rules": [
+    {
+      "match": {
+        "source": "image"
+      },
+      "risk_level": "HIGH",
+      "enforcement": "BLOCK"
+    },
+    {
+      "match": {
+        "threat_type": "*"
+      },
+      "enforcement": "BLOCK"
+    }
+  ]
+}
+

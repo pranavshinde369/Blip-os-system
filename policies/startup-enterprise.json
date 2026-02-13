@@ -1,0 +1,41 @@
+{
+  "name": "Startup Enterprise Policy",
+  "description": "Friendlier policy for startups: warn and sanitize by default, hard-block only critical risks.",
+  "rules": [
+    {
+      "match": {
+        "threat_type": "Private Key Block"
+      },
+      "risk_level": "CRITICAL",
+      "enforcement": "BLOCK"
+    },
+    {
+      "match": {
+        "threat_type": "AWS Access Key"
+      },
+      "risk_level": "HIGH",
+      "enforcement": "WARN"
+    },
+    {
+      "match": {
+        "threat_type": "Google API Key"
+      },
+      "risk_level": "HIGH",
+      "enforcement": "WARN"
+    },
+    {
+      "match": {
+        "source": "image"
+      },
+      "risk_level": "HIGH",
+      "enforcement": "WARN"
+    },
+    {
+      "match": {
+        "threat_type": "*"
+      },
+      "enforcement": "WARN"
+    }
+  ]
+}
+

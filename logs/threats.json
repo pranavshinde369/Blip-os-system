@@ -10,5 +10,82 @@
         "threat_type": "\ud83d\udeab PROPRIETARY CODE LEAK",
         "description": "Matches Internal Codebase (Dist: 0.00)\nRef: \n            class InternalAuth:\n                S...",
         "action_taken": "SANITIZED"
+    },
+    {
+        "timestamp": "2026-02-13 15:43:06",
+        "threat_type": "Google API Key",
+        "description": "Google Cloud/Maps/Gemini Key",
+        "action_taken": "SANITIZE_UNAVAILABLE_STANDARD",
+        "username": "shind",
+        "hostname": "Pranav",
+        "risk_level": "HIGH",
+        "source": "text",
+        "policy_enforcement": "BLOCK"
+    },
+    {
+        "timestamp": "2026-02-13 15:43:09",
+        "threat_type": "Google API Key",
+        "description": "Google Cloud/Maps/Gemini Key",
+        "action_taken": "SANITIZE_UNAVAILABLE_STANDARD",
+        "username": "shind",
+        "hostname": "Pranav",
+        "risk_level": "HIGH",
+        "source": "text",
+        "policy_enforcement": "BLOCK"
+    },
+    {
+        "timestamp": "2026-02-13 15:43:13",
+        "threat_type": "Google API Key",
+        "description": "Google Cloud/Maps/Gemini Key",
+        "action_taken": "SANITIZE_UNAVAILABLE_STANDARD",
+        "username": "shind",
+        "hostname": "Pranav",
+        "risk_level": "HIGH",
+        "source": "text",
+        "policy_enforcement": "BLOCK"
+    },
+    {
+        "timestamp": "2026-02-13 15:43:16",
+        "threat_type": "Google API Key",
+        "description": "Google Cloud/Maps/Gemini Key",
+        "action_taken": "ALLOWED",
+        "username": "shind",
+        "hostname": "Pranav",
+        "risk_level": "HIGH",
+        "source": "text",
+        "policy_enforcement": "BLOCK"
+    },
+    {
+        "timestamp": "2026-02-13 15:46:38",
+        "threat_type": "Google API Key",
+        "description": "Google Cloud/Maps/Gemini Key",
+        "action_taken": "SANITIZED",
+        "username": "shind",
+        "hostname": "Pranav",
+        "risk_level": "HIGH",
+        "source": "text",
+        "policy_enforcement": "WARN"
+    },
+    {
+        "timestamp": "2026-02-13 15:58:12",
+        "threat_type": "\ud83d\udeab PROPRIETARY CODE LEAK",
+        "description": "Matches Internal Codebase (Dist: 0.00)\nRef: \n            def execute_high_freq_trade(symbol, t...",
+        "action_taken": "SANITIZED",
+        "username": "shind",
+        "hostname": "Pranav",
+        "risk_level": "CRITICAL",
+        "source": "text",
+        "policy_enforcement": "WARN"
+    },
+    {
+        "timestamp": "2026-02-13 16:06:06",
+        "threat_type": "\ud83d\uddbc\ufe0f SENSITIVE IMAGE CONTENT",
+        "description": "The image contains an Aadhaar card with an Aadhaar number, name, and date of birth, which are all sensitive personal identifiable information.",
+        "action_taken": "BLOCKED",
+        "username": "shind",
+        "hostname": "Pranav",
+        "risk_level": "HIGH",
+        "source": "image",
+        "policy_enforcement": "WARN"
     }
 ]

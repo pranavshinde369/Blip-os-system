@@ -1,0 +1,48 @@
+{
+  "name": "India Govt Policy",
+  "description": "Strict offline-first protection for Indian IDs and secrets.",
+  "rules": [
+    {
+      "match": {
+        "threat_type": "Aadhaar Number"
+      },
+      "risk_level": "CRITICAL",
+      "enforcement": "BLOCK"
+    },
+    {
+      "match": {
+        "threat_type": "PAN Card"
+      },
+      "risk_level": "CRITICAL",
+      "enforcement": "BLOCK"
+    },
+    {
+      "match": {
+        "threat_type": "GSTIN"
+      },
+      "risk_level": "HIGH",
+      "enforcement": "BLOCK"
+    },
+    {
+      "match": {
+        "threat_type": "Indian Mobile"
+      },
+      "risk_level": "MEDIUM",
+      "enforcement": "WARN"
+    },
+    {
+      "match": {
+        "source": "image"
+      },
+      "risk_level": "HIGH",
+      "enforcement": "BLOCK"
+    },
+    {
+      "match": {
+        "threat_type": "*"
+      },
+      "enforcement": "BLOCK"
+    }
+  ]
+}
+

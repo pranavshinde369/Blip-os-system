@@ -50,6 +50,10 @@ PATTERNS = {
     }
 }
 
+# Pre-compile all regex patterns once for performance
+for data in PATTERNS.values():
+    data["compiled"] = re.compile(data["regex"])
+
 def scan_text(text):
     """
     Scans the provided text against all patterns.
@@ -59,7 +63,7 @@ def scan_text(text):
         return None
 
     for name, data in PATTERNS.items():
-        if re.search(data["regex"], text):
+        if data["compiled"].search(text):
             return {
                 "type": name,
                 "description": data["desc"],

@@ -2,8 +2,8 @@ pyperclip==1.8.2          # For accessing system clipboard
 customtkinter==5.2.0      # For the Modern UI (Popups/Dashboard)
 google-generativeai==0.3.1 # For Google Gemini AI (Enterprise Mode)
 plyer==2.1.0              # For System Notifications (Toast)
-pystray==0.19.5           # For System Tray Icon
-Pillow==10.0.0            # Image handling for icons
+pystray==0.19.5           # For System Tray Icon (also pulls a compatible Pillow)
+Pillow                   # Image handling for icons (let pip choose a compatible wheel)
 python-dotenv==1.0.0      # For managing API keys securely
 chromadb==0.4.22           # Vector Database
 sentence-transformers==2.3.1 # To convert code to vectors locally

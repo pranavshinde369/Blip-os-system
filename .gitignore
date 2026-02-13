@@ -1,0 +1,12 @@
+__pycache__/
+.venv/
+env/
+.env
+
+logs/
+data/vector_db/
+policies/*.local.json
+
+.DS_Store
+Thumbs.db
+

@@ -1,13 +1,22 @@
 import os
 import sys
+
 from core.monitor import start_monitoring
+
 
 def main():
     print("=========================================")
     print("   🛡️  BLIP ENDPOINT SENTINEL v1.0   ")
     print("   GovTech & Enterprise Security Agent   ")
     print("=========================================")
-    
+
+    # Optional admin dashboard mode
+    if "--dashboard" in sys.argv:
+        from ui.dashboard import launch_dashboard
+
+        launch_dashboard()
+        return
+
     # Check for .env
     if not os.path.exists(".env"):
         print("⚠️  WARNING: .env file not found.")
@@ -25,6 +34,7 @@ def main():
     except KeyboardInterrupt:
         print("\n👋 Blip Shutting Down. Stay Safe.")
         sys.exit(0)
+
 
 if __name__ == "__main__":
     main()
