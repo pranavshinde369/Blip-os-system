@@ -32,53 +32,7 @@ class EnterpriseRAG:
         print("🔒 Indexing Secret Company Codebase...")
         
         secrets = [
-            """
-# ============================================================================
-# INTERNAL FRAUD DETECTION HEURISTICS (CONFIDENTIAL & PROPRIETARY)
-# ============================================================================
-import json
-import hashlib
-from datetime import datetime, timedelta
-from internal_auth import get_redis_connection
-
-# --- RESTRICTED CREDENTIALS ---
-REDIS_PROD_CACHE = "redis://admin:K8s_Secr3t_992!@10.8.22.5:6379/0"
-STRIPE_INTERNAL_WEBHOOK = "whsec_8a7b6c5d4e3f2g1h0i9j8k7l6m5n4o3p"
-
-def evaluate_transaction_risk(user_profile, transaction_amount, ip_address):
-    '''
-    Proprietary scoring model to detect wash trading and account takeovers.
-    '''
-    redis_client = get_redis_connection(REDIS_PROD_CACHE)
-    
-    # 1. Velocity Check (Proprietary limits)
-    recent_tx_count = redis_client.get(f"tx_count:{user_profile['id']}")
-    if recent_tx_count and int(recent_tx_count) > 45:
-        return {"status": "BLOCKED", "reason": "High Velocity - Rule 4A"}
-        
-    # 2. Geolocation Impossible Travel
-    last_login_ip = redis_client.get(f"last_ip:{user_profile['id']}")
-    if last_login_ip and last_login_ip != ip_address:
-        time_since_login = datetime.now() - user_profile['last_login_time']
-        if time_since_login < timedelta(hours=2):
-            return {"status": "FLAGGED", "reason": "Impossible Travel"}
-
-    # 3. Secret Sauce: The 'Ghost Device' fingerprinting formula
-    salt = "ACME_GHOST_SALT_v9"
-    raw_fingerprint = f"{user_profile['device_id']}_{user_profile['screen_res']}_{salt}"
-    device_hash = hashlib.sha256(raw_fingerprint.encode()).hexdigest()
-    
-    known_fraud_hashes = redis_client.smembers("blacklist:device_hashes")
-    if device_hash in known_fraud_hashes:
-        return {"status": "BLOCKED", "reason": "Ghost Device Match"}
-        
-    # 4. Value Thresholding
-    if transaction_amount > 15000.00 and user_profile['account_age_days'] < 30:
-        return {"status": "MANUAL_REVIEW", "reason": "High Value New Account"}
-
-    return {"status": "APPROVED", "risk_score": 0.05}
-""",
-    # Secret 1: Google-style Search Logic
+            # Secret 1: Google-style Search Logic
             """
             def compute_pagerank(graph, damping=0.85):
                 ranks = {node: 1/len(graph) for node in graph}

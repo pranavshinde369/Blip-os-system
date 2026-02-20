@@ -103,20 +103,6 @@ def start_monitoring():
                         )
                         _notify(title="Blip", message="Blocked by Security Policy.", timeout=2)
 
-                    def on_allow():
-                        print("✅ ALLOWED")
-                        user_action[0] = "ALLOWED"
-                        log_incident(
-                            threat["type"],
-                            threat["description"],
-                            "ALLOWED",
-                            extra={
-                                "risk_level": threat.get("risk_level"),
-                                "source": threat.get("source", "text"),
-                                "policy_enforcement": threat.get("policy_enforcement"),
-                            },
-                        )
-
                     def on_sanitize():
                         # In STANDARD mode we promise sovereign/offline behavior,
                         # so we do not call Gemini at all.
@@ -193,7 +179,6 @@ def start_monitoring():
                     show_alert(
                         threat_type=threat["type"],
                         threat_desc=threat["description"],
-                        on_allow=on_allow,
                         on_block=on_block,
                         on_sanitize=on_sanitize,
                         risk_level=threat.get("risk_level", "MEDIUM"),
@@ -257,20 +242,6 @@ def start_monitoring():
                                     timeout=2,
                                 )
 
-                            def on_allow_image():
-                                print("✅ IMAGE ALLOWED")
-                                user_action[0] = "ALLOWED"
-                                log_incident(
-                                    threat["type"],
-                                    threat["description"],
-                                    "ALLOWED",
-                                    extra={
-                                        "risk_level": threat.get("risk_level"),
-                                        "source": threat.get("source", "image"),
-                                        "policy_enforcement": threat.get("policy_enforcement"),
-                                    },
-                                )
-
                             def on_sanitize_image():
                                 # Handled as a BLOCK with a clear message.
                                 print("🚫 SANITIZE not supported for images. Blocking instead.")
@@ -303,7 +274,6 @@ def start_monitoring():
                             show_alert(
                                 threat_type=threat["type"],
                                 threat_desc=threat["description"],
-                                on_allow=on_allow_image,
                                 on_block=on_block_image,
                                 on_sanitize=on_sanitize_image,
                                 risk_level=threat.get("risk_level", "HIGH"),

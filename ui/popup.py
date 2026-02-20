@@ -9,7 +9,6 @@ class WarningPopup(ctk.CTk):
         self,
         threat_type,
         threat_desc,
-        on_allow,
         on_block,
         on_sanitize,
         risk_level="MEDIUM",
@@ -18,7 +17,6 @@ class WarningPopup(ctk.CTk):
     ):
         super().__init__()
 
-        self.on_allow_callback = on_allow
         self.on_block_callback = on_block
         self.on_sanitize_callback = on_sanitize
         self.risk_level = (risk_level or "MEDIUM").upper()
@@ -90,21 +88,11 @@ class WarningPopup(ctk.CTk):
         self.actions = ctk.CTkFrame(self, height=100, fg_color="transparent")
         self.actions.pack(fill="x", side="bottom", pady=20, padx=20)
 
-        self.btn_sanitize = ctk.CTkButton(
-            self.actions,
-            text="✨ SANITIZE & PASTE",
-            fg_color="#3b82f6",
-            hover_color="#2563eb",
-            font=("Arial", 12, "bold"),
-            command=self.sanitize_action,
-            width=430,
-        )
-        self.btn_sanitize.pack(side="top", pady=(0, 10))
-
+        # Two-button layout: BLOCK vs SANITIZE
         self.bottom_row = ctk.CTkFrame(self.actions, fg_color="transparent")
-        self.bottom_row.pack(side="top", fill="x")
+        self.bottom_row.pack(side="top", fill="x", pady=(12, 0))
 
-        self.btn_cancel = ctk.CTkButton(
+        self.btn_block = ctk.CTkButton(
             self.bottom_row,
             text="BLOCK",
             fg_color="#ef4444",
@@ -113,21 +101,18 @@ class WarningPopup(ctk.CTk):
             command=self.block_action,
             width=210,
         )
-        self.btn_cancel.pack(side="left")
+        self.btn_block.pack(side="left")
 
-        self.btn_allow = ctk.CTkButton(
+        self.btn_sanitize = ctk.CTkButton(
             self.bottom_row,
-            text="ALLOW",
-            fg_color="transparent",
-            border_width=1,
-            border_color="#94a3b8",
-            text_color="#94a3b8",
-            hover_color="#334155",
-            font=("Arial", 12),
-            command=self.allow_action,
+            text="✨ SANITIZE",
+            fg_color="#3b82f6",
+            hover_color="#2563eb",
+            font=("Arial", 12, "bold"),
+            command=self.sanitize_action,
             width=210,
         )
-        self.btn_allow.pack(side="right")
+        self.btn_sanitize.pack(side="right")
 
     def _close(self):
         """Helper to close cleanly"""
@@ -138,10 +123,6 @@ class WarningPopup(ctk.CTk):
         self.on_block_callback()
         self._close()
 
-    def allow_action(self):
-        self.on_allow_callback()
-        self._close()
-
     def sanitize_action(self):
         self.on_sanitize_callback()
         self._close()
@@ -150,7 +131,6 @@ class WarningPopup(ctk.CTk):
 def show_alert(
     threat_type,
     threat_desc,
-    on_allow,
     on_block,
     on_sanitize,
     risk_level=None,
@@ -160,7 +140,6 @@ def show_alert(
     app = WarningPopup(
         threat_type,
         threat_desc,
-        on_allow,
         on_block,
         on_sanitize,
         risk_level=risk_level or "MEDIUM",

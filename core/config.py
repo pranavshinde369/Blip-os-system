@@ -11,7 +11,8 @@ class Config:
     VERSION = "1.0.0"
     
     # Modes: "STANDARD" (Local Only) or "ENTERPRISE" (AI Powered)
-    DEFAULT_MODE = "STANDARD"
+    # For simplicity, default to ENTERPRISE-like behavior.
+    DEFAULT_MODE = "ENTERPRISE"
     # Can be overridden via environment: BLIP_MODE=STANDARD|ENTERPRISE
     MODE = os.getenv("BLIP_MODE", DEFAULT_MODE).upper()
     
