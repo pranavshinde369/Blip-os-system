@@ -1,0 +1,512 @@
+# ============================================================
+# BLIP ENDPOINT SENTINEL — demo_live_test.py
+# LIVE COPY-PASTE DEMO FOR JUDGES
+#
+# Run daemon first:   python main.py
+# Then run this:      python demo_live_test.py
+#
+# Press number keys to instantly copy each test case.
+# Sentinel popup fires within 1 second of each copy.
+# ============================================================
+
+import argparse
+import time
+import pyperclip
+
+# ══════════════════════════════════════════════════════════════
+#  ALL LIVE TEST PAYLOADS
+# ══════════════════════════════════════════════════════════════
+
+TESTS = [
+
+    # ── INDIA PII ─────────────────────────────────────────────
+
+    {
+        "id":       "01",
+        "category": "INDIA PII",
+        "label":    "Aadhaar Number",
+        "severity": "CRITICAL",
+        "score":    "85+",
+        "text":     "My Aadhaar number is 2345 6789 0123. Please update in records.",
+        "expect":   "BLOCK popup — Aadhaar redacted as XXXX-XXXX-0123",
+    },
+    {
+        "id":       "02",
+        "category": "INDIA PII",
+        "label":    "PAN Card",
+        "severity": "CRITICAL",
+        "score":    "75+",
+        "text":     "PAN Card details — Name: Rahul Sharma  PAN: ABCDE1234F  DOB: 15/08/1990",
+        "expect":   "BLOCK popup — PAN masked as ABCXXXXXXX",
+    },
+    {
+        "id":       "03",
+        "category": "INDIA PII",
+        "label":    "GSTIN Number",
+        "severity": "HIGH",
+        "score":    "65+",
+        "text":     "Invoice #INV-2024-001\nVendor GSTIN: 27ABCDE1234F1Z5\nAmount: ₹45,000 + 18% GST",
+        "expect":   "SANITIZE popup — GSTIN flagged",
+    },
+    {
+        "id":       "04",
+        "category": "INDIA PII",
+        "label":    "Aadhaar + PAN + GSTIN combo",
+        "severity": "CRITICAL",
+        "score":    "98+",
+        "text": (
+            "Employee KYC Record\n"
+            "Name:    Priya Nair\n"
+            "Aadhaar: 3456 7890 1234\n"
+            "PAN:     FGHIJ5678K\n"
+            "GSTIN:   29FGHIJ5678K1Z3\n"
+            "Phone:   +91 9876543210\n"
+            "Email:   priya.nair@democorp.in"
+        ),
+        "expect":   "HARD BLOCK — 4 violations, score 98+, multi-threat bonus",
+    },
+    {
+        "id":       "05",
+        "category": "INDIA PII",
+        "label":    "Bank Account + IFSC",
+        "severity": "HIGH",
+        "score":    "70+",
+        "text": (
+            "Payment Transfer Details\n"
+            "Account Name:   Amit Patel\n"
+            "Account Number: 9191000034567890\n"
+            "IFSC Code:      HDFC0001234\n"
+            "Bank:           HDFC Bank, Mumbai\n"
+            "Amount:         ₹2,50,000"
+        ),
+        "expect":   "BLOCK popup — bank account + IFSC flagged",
+    },
+    {
+        "id":       "06",
+        "category": "INDIA PII",
+        "label":    "Hindi PII (Devanagari)",
+        "severity": "MEDIUM",
+        "score":    "55+",
+        "text": (
+            "कर्मचारी विवरण\n"
+            "नाम: राहुल शर्मा\n"
+            "पता: 42 एमजी रोड, मुंबई, महाराष्ट्र\n"
+            "आधार: 2345 6789 0123\n"
+            "मोबाइल: +91 9876543210"
+        ),
+        "expect":   "WARN/BLOCK — Hindi PII + Aadhaar detected",
+    },
+
+    # ── CLOUD SECRETS ─────────────────────────────────────────
+
+    {
+        "id":       "07",
+        "category": "CLOUD SECRETS",
+        "label":    "AWS Access Key",
+        "severity": "CRITICAL",
+        "score":    "90+",
+        "text": (
+            "AWS Credentials — DO NOT SHARE\n"
+            "AWS_ACCESS_KEY_ID     = AKIAIOSFODNN7EXAMPLE\n"
+            "AWS_SECRET_ACCESS_KEY = wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY\n"
+            "AWS_DEFAULT_REGION    = ap-south-1"
+        ),
+        "expect":   "HARD BLOCK — AWS key pair detected, score 90+",
+    },
+    {
+        "id":       "08",
+        "category": "CLOUD SECRETS",
+        "label":    "RSA Private Key",
+        "severity": "CRITICAL",
+        "score":    "95+",
+        "text": (
+            "-----BEGIN RSA PRIVATE KEY-----\n"
+            "MIIEpAIBAAKCAQEA0Z3VS5JJcds3xHn/ygWep4PAtEsHAFKeFFW\n"
+            "GFRWrBYtMKMfMd8pPQrFqFDWbUMjZihrqBdxjbR2PwFzFw4rWm\n"
+            "K9dSBfCHBpaLjWjpFONLMVHGI2ZkMHaMfOqPiDmcKhxLeEKkqMN\n"
+            "-----END RSA PRIVATE KEY-----"
+        ),
+        "expect":   "HARD BLOCK immediately — private key, score 95+",
+    },
+    {
+        "id":       "09",
+        "category": "CLOUD SECRETS",
+        "label":    "JWT Token",
+        "severity": "HIGH",
+        "score":    "75+",
+        "text": (
+            "Authorization: Bearer "
+            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9."
+            "eyJzdWIiOiJ1c2VyXzEyMyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTcwMDAwMH0."
+            "xK9mP2vL8nQwRjT5uY3cB6hF1aE0dSbfCg7iJkMn"
+        ),
+        "expect":   "BLOCK popup — JWT token detected",
+    },
+    {
+        "id":       "10",
+        "category": "CLOUD SECRETS",
+        "label":    "Generic API Key",
+        "severity": "HIGH",
+        "score":    "70+",
+        "text": (
+            "Stripe Payment Gateway Config\n"
+            
+            "webhook_secret = whsec_8oLmNpQrStUvWxYz1234567890abcdef\n"
+            "publishable_key = pk_live_TYooMQauvdEDq54NiTphI7jx"
+        ),
+        "expect":   "BLOCK popup — multiple API keys detected",
+    },
+
+    # ── DATABASE CREDENTIALS ──────────────────────────────────
+
+    {
+        "id":       "11",
+        "category": "DATABASE",
+        "label":    "PostgreSQL Connection String",
+        "severity": "CRITICAL",
+        "score":    "92+",
+        "text":     "DATABASE_URL=postgresql://admin:Sup3rS3cur3Passw0rd!@db.internal.democorp.in:5432/prod_db",
+        "expect":   "HARD BLOCK — DB connection string with credentials",
+    },
+    {
+        "id":       "12",
+        "category": "DATABASE",
+        "label":    "MongoDB URI",
+        "severity": "CRITICAL",
+        "score":    "90+",
+        "text":     "MONGO_URI=mongodb://root:M0ng0S3cr3tP@ss@mongo.internal:27017/democorp?authSource=admin",
+        "expect":   "HARD BLOCK — MongoDB URI with embedded password",
+    },
+    {
+        "id":       "13",
+        "category": "DATABASE",
+        "label":    "Multiple DB configs",
+        "severity": "CRITICAL",
+        "score":    "97+",
+        "text": (
+            "# Production Database Config\n"
+            "POSTGRES_URL = postgresql://db_admin:ProdPass123!@10.0.1.45:5432/democorp\n"
+            "REDIS_URL    = redis://:RedisSecret456@10.0.1.46:6379/0\n"
+            "MONGO_URL    = mongodb://mongo_user:MongoPass789@10.0.1.47:27017/logs\n"
+            "ELASTIC_URL  = https://elastic:ElasticPass@10.0.1.48:9200"
+        ),
+        "expect":   "HARD BLOCK — 4 DB strings + internal IPs, score 97+",
+    },
+
+    # ── CODE WITH EMBEDDED SECRETS ────────────────────────────
+
+    {
+        "id":       "14",
+        "category": "CODE + SECRETS",
+        "label":    "Python config with AWS + DB (surgical test)",
+        "severity": "CRITICAL",
+        "score":    "88+",
+        "text": (
+            "# app/config.py\n"
+            "import os\n\n"
+            "class ProductionConfig:\n"
+            "    DEBUG = False\n"
+            "    TESTING = False\n"
+            "    SQLALCHEMY_TRACK_MODIFICATIONS = False\n\n"
+            "    # ⚠️ Remove before PR\n"
+            "    AWS_ACCESS_KEY_ID = 'AKIAIOSFODNN7EXAMPLE'\n"
+            "    AWS_SECRET_ACCESS_KEY = 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY'\n"
+            "    DATABASE_URL = 'postgresql://admin:DBPass123!@localhost/myapp'\n\n"
+            "    # Safe config below\n"
+            "    MAX_CONTENT_LENGTH = 16 * 1024 * 1024\n"
+            "    UPLOAD_FOLDER = '/var/uploads'\n"
+            "    ALLOWED_EXTENSIONS = {'png', 'jpg', 'pdf'}\n"
+            "    PAGINATION_PER_PAGE = 20\n"
+            "    SESSION_COOKIE_SECURE = True\n"
+            "    SESSION_COOKIE_HTTPONLY = True"
+        ),
+        "expect":   "SANITIZE — only 3 secret lines redacted, rest of class intact",
+    },
+    {
+        "id":       "15",
+        "category": "CODE + SECRETS",
+        "label":    "Django .env file",
+        "severity": "CRITICAL",
+        "score":    "94+",
+        "text": (
+            "# .env — PRODUCTION\n"
+            "SECRET_KEY=django-insecure-k#9x$mP2vL@nQw8zRjT5uY3cB6hF1aE0\n"
+            "DEBUG=False\n"
+            "ALLOWED_HOSTS=api.democorp.in,dashboard.democorp.in\n"
+            "DATABASE_URL=postgresql://db_admin:Sup3rS3cur3!@db.internal:5432/prod\n"
+            "AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE\n"
+            "AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY\n"
+            "AWS_S3_BUCKET=democorp-prod-assets\n"
+            "REDIS_URL=redis://:RedisPass@cache.internal:6379/0\n"
+            "JWT_SECRET=jwt-prod-9f8e7d6c5b4a3210fedcba\n"
+            "EMAIL_HOST_PASSWORD=SG.xxxxxxxxxxxxxxxxxxxx\n"
+           
+            "SENTRY_DSN=https://abc123@sentry.io/123456\n"
+            "LOG_LEVEL=WARNING\n"
+            "TIME_ZONE=Asia/Kolkata"
+        ),
+        "expect":   "HARD BLOCK — .env file, 8 violations detected",
+    },
+
+    # ── FINANCIAL DATA ────────────────────────────────────────
+
+    {
+        "id":       "16",
+        "category": "FINANCIAL",
+        "label":    "Credit Card Numbers",
+        "severity": "CRITICAL",
+        "score":    "88+",
+        "text": (
+            "Test Payment Cards\n"
+            "Visa:       4111 1111 1111 1111  CVV: 123  Exp: 12/26\n"
+            "Mastercard: 5500 0000 0000 0004  CVV: 456  Exp: 08/25\n"
+            "Amex:       3714 496353 98431    CVV: 7890 Exp: 03/27"
+        ),
+        "expect":   "HARD BLOCK — 3 credit card numbers, score 88+",
+    },
+    {
+        "id":       "17",
+        "category": "FINANCIAL",
+        "label":    "Payroll data",
+        "severity": "CRITICAL",
+        "score":    "95+",
+        "text": (
+            "Q1 2024 Payroll Export\n"
+            "Emp ID | Name          | PAN        | Aadhaar          | Salary     | Bank Acc\n"
+            "E001   | Rahul Sharma  | ABCDE1234F | 2345 6789 0123   | ₹1,80,000  | 9191000012345\n"
+            "E002   | Priya Nair    | FGHIJ5678K | 3456 7890 1234   | ₹1,55,000  | 9191000023456\n"
+            "E003   | Amit Patel    | KLMNO9012L | 4567 8901 2345   | ₹2,20,000  | 9191000034567"
+        ),
+        "expect":   "HARD BLOCK — PAN + Aadhaar + bank combo, score 95+",
+    },
+
+    # ── CLEAN CODE (ZERO FALSE POSITIVES) ─────────────────────
+
+    {
+        "id":       "18",
+        "category": "CLEAN — NO VIOLATION",
+        "label":    "Pure business logic — should ALLOW",
+        "severity": "NONE",
+        "score":    "0",
+        "text": (
+            "def calculate_invoice_total(\n"
+            "    items: list[dict],\n"
+            "    tax_rate: float = 0.18,\n"
+            "    discount: float = 0.0,\n") +
+            ") -> dict:\n"
+            "    subtotal = sum(i['qty'] * i['price'] for i in items)\n"
+            "    discount_amt = subtotal * discount\n"
+            "    taxable = subtotal - discount_amt\n"
+            "    tax_amt = taxable * tax_rate\n"
+            "    total = taxable + tax_amt\n"
+            "    return {\n"
+            "        'subtotal': round(subtotal, 2),\n"
+            "        'discount': round(discount_amt, 2),\n"
+            "        'tax':      round(tax_amt, 2),\n"
+            "        'total':    round(total, 2),\n"
+            "    }",
+        "expect":   "✅ ALLOW — zero popup, clean code passes silently",
+    },
+    {
+        "id":       "19",
+        "category": "CLEAN — NO VIOLATION",
+        "label":    "Meeting notes — should ALLOW",
+        "severity": "NONE",
+        "score":    "0",
+        "text": (
+            "Sprint 14 Standup Notes — 04 Apr 2026\n\n"
+            "Rahul: Completed payment gateway integration. PR #341 up for review.\n"
+            "Priya: Working on dashboard analytics. ETA tomorrow.\n"
+            "Amit:  Blocked on design review for onboarding flow.\n\n"
+            "Action items:\n"
+            "- Rahul to get PR reviewed by EOD\n"
+            "- Priya to share dashboard mockup by 3pm\n"
+            "- Amit to ping design team on Slack\n\n"
+            "Next standup: Tomorrow 10am"
+        ),
+        "expect":   "✅ ALLOW — normal text, no popup at all",
+    },
+    {
+        "id":       "20",
+        "category": "CLEAN — NO VIOLATION",
+        "label":    "SQL query — should ALLOW",
+        "severity": "NONE",
+        "score":    "0",
+        "text": (
+            "SELECT\n"
+            "    u.id,\n"
+            "    u.name,\n"
+            "    COUNT(o.id)       AS total_orders,\n"
+            "    SUM(o.amount)     AS lifetime_value,\n"
+            "    MAX(o.created_at) AS last_order\n"
+            "FROM users u\n"
+            "LEFT JOIN orders o ON o.user_id = u.id\n"
+            "WHERE u.created_at >= '2024-01-01'\n"
+            "  AND u.is_active = true\n"
+            "GROUP BY u.id, u.name\n"
+            "HAVING COUNT(o.id) > 0\n"
+            "ORDER BY lifetime_value DESC\n"
+            "LIMIT 100;"
+        ),
+        "expect":   "✅ ALLOW — clean SQL, no credentials, passes silently",
+    },
+]
+
+
+# ══════════════════════════════════════════════════════════════
+#  Display helpers
+# ══════════════════════════════════════════════════════════════
+
+CATEGORY_COLORS = {
+    "INDIA PII":            "\033[91m",   # red
+    "CLOUD SECRETS":        "\033[93m",   # yellow
+    "DATABASE":             "\033[95m",   # magenta
+    "CODE + SECRETS":       "\033[96m",   # cyan
+    "FINANCIAL":            "\033[91m",   # red
+    "CLEAN — NO VIOLATION": "\033[92m",   # green
+}
+RESET  = "\033[0m"
+BOLD   = "\033[1m"
+DIM    = "\033[2m"
+
+
+def color(text: str, cat: str) -> str:
+    return CATEGORY_COLORS.get(cat, "") + text + RESET
+
+
+def print_menu():
+    print(f"\n{BOLD}{'='*65}{RESET}")
+    print(f"{BOLD}  BLIP SENTINEL — Live Judge Demo{RESET}")
+    print(f"{DIM}  Daemon must be running: python main.py{RESET}")
+    print(f"{'='*65}{RESET}\n")
+
+    current_cat = ""
+    for t in TESTS:
+        if t["category"] != current_cat:
+            current_cat = t["category"]
+            print(f"  {color(f'── {current_cat} ──', current_cat)}")
+
+        score_str  = (f"score ~{t['score']}"
+                      if t["score"] != "0" else "CLEAN")
+        sev_str    = t["severity"]
+        print(
+            f"  [{BOLD}{t['id']}{RESET}] "
+            f"{t['label']:<42} "
+            f"{DIM}{sev_str:<10}{RESET} "
+            f"{DIM}{score_str}{RESET}"
+        )
+
+    print(f"\n  [{BOLD}A{RESET}]  AUTO MODE — cycle all with 10s gap")
+    print(f"  [{BOLD}AC{RESET}] AUTO CRITICAL — cycle violations only (skip clean)")
+    print(f"  [{BOLD}Q{RESET}]  Quit")
+    print(f"\n{'='*65}\n")
+
+
+def copy_and_show(t: dict, pause: bool = True):
+    """Copy payload and print what to expect."""
+    print(f"\n  {BOLD}[{t['id']}] {t['label']}{RESET}")
+    print(f"  {DIM}Category : {t['category']}{RESET}")
+    print(f"  {DIM}Severity : {t['severity']}  |  Score: ~{t['score']}{RESET}")
+    print(f"  {DIM}Payload  : {t['text'][:72].strip()}...{RESET}"
+          if len(t['text']) > 72
+          else f"  {DIM}Payload  : {t['text'].strip()}{RESET}")
+    print(f"\n  {BOLD}► Copying to clipboard...{RESET}")
+    pyperclip.copy(t["text"])
+    print(f"  {BOLD}✓ Copied! ({len(t['text'])} chars){RESET}")
+    print(f"\n  {BOLD}Expected:{RESET} {t['expect']}\n")
+    print(f"  {DIM}{'─'*55}{RESET}")
+
+    if pause:
+        input(f"  {DIM}Press Enter for menu...{RESET}")
+
+
+def auto_mode(violations_only: bool = False):
+    subset = (
+        [t for t in TESTS if t["score"] != "0"]
+        if violations_only else TESTS
+    )
+    label = "CRITICAL ONLY" if violations_only else "ALL"
+    print(f"\n  {BOLD}AUTO MODE [{label}]{RESET} — 10s between payloads")
+    print(f"  {DIM}Press Ctrl+C to stop{RESET}\n")
+
+    cycle = 0
+    while True:
+        cycle += 1
+        print(f"\n  {DIM}── Cycle {cycle} ──{RESET}")
+        for t in subset:
+            copy_and_show(t, pause=False)
+            for i in range(10, 0, -1):
+                print(f"\r  {DIM}Next in {i}s...  {RESET}", end="", flush=True)
+                time.sleep(1)
+            print()
+
+
+def interactive_mode():
+    print_menu()
+    while True:
+        try:
+            choice = input(f"  {BOLD}Select [{'/'.join([t['id'] for t in TESTS[:5]])}... A/AC/Q]: {RESET}").strip().upper()
+        except (KeyboardInterrupt, EOFError):
+            print(f"\n  {DIM}Goodbye!{RESET}\n")
+            break
+
+        if choice == "Q":
+            print(f"\n  {DIM}Goodbye!{RESET}\n")
+            break
+        elif choice == "A":
+            try:
+                auto_mode(violations_only=False)
+            except KeyboardInterrupt:
+                print(f"\n  {DIM}Auto mode stopped{RESET}")
+                print_menu()
+        elif choice == "AC":
+            try:
+                auto_mode(violations_only=True)
+            except KeyboardInterrupt:
+                print(f"\n  {DIM}Auto mode stopped{RESET}")
+                print_menu()
+        else:
+            match = next((t for t in TESTS if t["id"] == choice.zfill(2)), None)
+            if match:
+                copy_and_show(match, pause=True)
+                print_menu()
+            else:
+                print(f"  {DIM}Invalid choice — enter 01–20, A, AC, or Q{RESET}")
+
+
+# ══════════════════════════════════════════════════════════════
+#  Entry point
+# ══════════════════════════════════════════════════════════════
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="Blip Sentinel — Live Judge Demo"
+    )
+    parser.add_argument(
+        "--auto", action="store_true",
+        help="Auto-cycle all payloads with 10s gap"
+    )
+    parser.add_argument(
+        "--critical", action="store_true",
+        help="Auto-cycle violation payloads only"
+    )
+    parser.add_argument(
+        "--id", type=str,
+        help="Copy a specific test directly e.g. --id 07"
+    )
+    args = parser.parse_args()
+
+    if args.id:
+        match = next(
+            (t for t in TESTS if t["id"] == args.id.zfill(2)), None
+        )
+        if match:
+            copy_and_show(match, pause=False)
+        else:
+            print(f"  Test ID {args.id} not found")
+    elif args.auto:
+        auto_mode(violations_only=False)
+    elif args.critical:
+        auto_mode(violations_only=True)
+    else:
+        interactive_mode()

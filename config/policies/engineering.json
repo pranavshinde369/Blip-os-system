@@ -1,0 +1,31 @@
+{
+  "policy_id": "GRP-ENG-001",
+  "policy_version": "1.2",
+  "group": "engineering",
+  "description": "Secure coding and secrets management policy",
+  "severity": "CRITICAL",
+  "active": true,
+  "expires_at": "2027-12-31",
+  "rules": [
+    {
+      "rule_id": "ENG-001",
+      "description": "No AWS credentials or cloud secrets in clipboard",
+      "keywords": ["aws_secret", "aws_access_key", "AKID", "secret_key", "api_key"]
+    },
+    {
+      "rule_id": "ENG-002",
+      "description": "No private RSA/SSH keys",
+      "keywords": ["BEGIN RSA PRIVATE KEY", "BEGIN OPENSSH PRIVATE KEY", "BEGIN EC PRIVATE KEY"]
+    },
+    {
+      "rule_id": "ENG-003",
+      "description": "No database connection strings with credentials",
+      "keywords": ["mongodb://", "postgresql://", "mysql://", "redis://", "password=", "pwd="]
+    },
+    {
+      "rule_id": "ENG-004",
+      "description": "No internal IP ranges or network topology",
+      "keywords": ["192.168.", "10.0.", "172.16.", "internal-api", "vpn.company"]
+    }
+  ]
+}

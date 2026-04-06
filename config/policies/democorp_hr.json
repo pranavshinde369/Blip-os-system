@@ -1,0 +1,38 @@
+{
+  "policy_id": "DEMOCORP-HR-001",
+  "policy_version": "1.0",
+  "group": "finance",
+  "description": "DemoCorp HR & Finance Data Protection Policy",
+  "severity": "CRITICAL",
+  "active": true,
+  "expires_at": "2027-12-31",
+  "rules": [
+    {
+      "rule_id": "DC-HR-001",
+      "description": "Employee Aadhaar, PAN, bank account, and salary data is classified as Sensitive Personal Data under DPDP Act 2023.",
+      "keywords": [
+        "aadhaar", "PAN", "bank account", "IFSC", "salary",
+        "employee id", "payroll", "compensation", "ctc",
+        "annual package", "hike", "appraisal"
+      ]
+    },
+    {
+      "rule_id": "DC-HR-002",
+      "description": "Customer PII including names, addresses, phone numbers, and email addresses from production database must not be copied in bulk.",
+      "keywords": [
+        "customer_id", "user_email", "phone_number", "home_address",
+        "date_of_birth", "customer data", "user data export",
+        "bulk export", "data dump"
+      ]
+    },
+    {
+      "rule_id": "DC-HR-003",
+      "description": "Financial transaction data, account balances, and payment details are classified CRITICAL under PCI-DSS and DPDP.",
+      "keywords": [
+        "account_balance", "transaction_id", "payment_details",
+        "credit_card", "card_number", "cvv", "expiry_date",
+        "bank_transfer", "upi_id", "wallet_balance"
+      ]
+    }
+  ]
+}

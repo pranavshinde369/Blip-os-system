@@ -1,0 +1,82 @@
+{
+  "policy_id": "DEMOCORP-001",
+  "policy_version": "2.1",
+  "group": "engineering",
+  "description": "DemoCorp Secure Engineering Policy — DPDP Act 2023 Compliant",
+  "severity": "CRITICAL",
+  "active": true,
+  "expires_at": "2027-12-31",
+  "rules": [
+    {
+      "rule_id": "DC-ENG-001",
+      "description": "AWS and cloud provider credentials must never exist outside secrets vault. Any access key, secret key, or session token is a CRITICAL violation.",
+      "keywords": [
+        "aws_access_key_id", "aws_secret_access_key", "AKIA",
+        "cloud credentials", "access key", "secret key", "session token",
+        "boto3", "aws_session_token", "cloud secret"
+      ]
+    },
+    {
+      "rule_id": "DC-ENG-002",
+      "description": "Database connection strings containing credentials are strictly forbidden. This includes PostgreSQL, MySQL, MongoDB, Redis URIs with embedded passwords.",
+      "keywords": [
+        "postgresql://", "mysql://", "mongodb://", "redis://",
+        "connection string", "db password", "database uri",
+        "DB_PASSWORD", "DATABASE_URL", "db_credentials"
+      ]
+    },
+    {
+      "rule_id": "DC-ENG-003",
+      "description": "Private cryptographic keys including RSA, EC, SSH, and PGP private keys are strictly prohibited from being copied or transmitted.",
+      "keywords": [
+        "BEGIN RSA PRIVATE KEY", "BEGIN OPENSSH PRIVATE KEY",
+        "BEGIN EC PRIVATE KEY", "BEGIN PGP PRIVATE KEY",
+        "private_key", "privatekey", "rsa_key", "ssh_key"
+      ]
+    },
+    {
+      "rule_id": "DC-ENG-004",
+      "description": "Internal microservice URLs, API gateway endpoints, and internal network addresses must not be shared externally.",
+      "keywords": [
+        "internal-api", "api.internal", "svc.cluster.local",
+        "microservice", "internal endpoint", "192.168.", "10.0.",
+        "gateway.democorp.internal", "auth.internal"
+      ]
+    },
+    {
+      "rule_id": "DC-ENG-005",
+      "description": "Aadhaar numbers, PAN cards, and any Indian citizen PII are governed under DPDP Act 2023 and must be masked before sharing.",
+      "keywords": [
+        "aadhaar", "aadhar", "PAN card", "permanent account number",
+        "uid number", "voter id", "driving licence", "passport number"
+      ]
+    },
+    {
+      "rule_id": "DC-ENG-006",
+      "description": "JWT tokens, OAuth bearer tokens, and session cookies contain active authentication state and must never be copied.",
+      "keywords": [
+        "eyJ", "bearer token", "jwt", "oauth_token",
+        "session_cookie", "auth_token", "refresh_token",
+        "access_token", "id_token"
+      ]
+    },
+    {
+      "rule_id": "DC-ENG-007",
+      "description": "Production environment variables and .env file contents containing secrets must never leave the secure development environment.",
+      "keywords": [
+        "SECRET_KEY", "PROD_", "PRODUCTION_", ".env",
+        "environment variable", "dotenv", "APP_SECRET",
+        "FLASK_SECRET", "DJANGO_SECRET", "JWT_SECRET"
+      ]
+    },
+    {
+      "rule_id": "DC-ENG-008",
+      "description": "Hardcoded passwords in any form — function arguments, config dictionaries, or string literals — violate secure coding standards.",
+      "keywords": [
+        "password=", "passwd=", "pwd=", "hardcoded password",
+        "plain text password", "password123", "admin123",
+        "default_password", "root_password"
+      ]
+    }
+  ]
+}
