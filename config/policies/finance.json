@@ -1,0 +1,31 @@
+{
+  "policy_id": "GRP-FIN-001",
+  "policy_version": "1.0",
+  "group": "finance",
+  "description": "Financial data and PII protection policy",
+  "severity": "CRITICAL",
+  "active": true,
+  "expires_at": "2027-12-31",
+  "rules": [
+    {
+      "rule_id": "FIN-001",
+      "description": "No Aadhaar numbers",
+      "keywords": ["aadhaar", "aadhar", "uid number", "unique identification"]
+    },
+    {
+      "rule_id": "FIN-002",
+      "description": "No PAN card numbers",
+      "keywords": ["PAN", "permanent account number", "income tax"]
+    },
+    {
+      "rule_id": "FIN-003",
+      "description": "No GSTIN or GST registration numbers",
+      "keywords": ["GSTIN", "GST number", "goods and services tax"]
+    },
+    {
+      "rule_id": "FIN-004",
+      "description": "No bank account or IFSC details",
+      "keywords": ["account number", "IFSC", "bank account", "routing number", "SWIFT"]
+    }
+  ]
+}

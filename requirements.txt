@@ -1,0 +1,44 @@
+# ============================================================
+# BLIP ENDPOINT SENTINEL — requirements.txt
+# Python 3.10+  |  pip install -r requirements.txt
+# ============================================================
+
+# --- System Interception ---
+pyperclip==1.9.0          # Clipboard read/write
+Pillow==10.4.0             # Screenshot capture + image handling
+plyer==2.1.0               # OS toast notifications
+
+# --- UI / Frontend ---
+customtkinter==5.2.2       # Modern dark-mode tkinter UI
+darkdetect==0.8.0          # Auto dark/light mode detection (CTk dep)
+
+# --- Local AI / RAG ---
+chromadb==0.5.5            # Local vector database
+sentence-transformers==3.1.1  # all-MiniLM-L6-v2 embeddings
+torch==2.4.1               # PyTorch backend for sentence-transformers
+transformers==4.44.2       # HuggingFace transformers (ST dependency)
+
+# --- Cloud AI ---
+google-generativeai==0.7.2 # Gemini 1.5 Flash + Gemini Pro Vision
+
+# --- Security & Encryption ---
+cryptography==43.0.1       # AES-256 Fernet encryption for audit logs
+pyotp==2.9.0               # TOTP (Google Authenticator) for admin dashboard
+
+# --- Notifications ---
+requests==2.32.3           # HTTP client for Telegram/Pushover alerts
+
+# --- File Watching (hot-reload) ---
+watchdog==4.0.2            # Policy file hot-reload without daemon restart
+
+# --- Active Window Detection ---
+pygetwindow==0.0.9         # Windows: get active window title + process
+psutil==6.0.0              # Cross-platform process info
+
+# --- Report Generation ---
+reportlab==4.2.2           # DPDP compliance PDF report generator
+
+# --- Utilities ---
+python-dotenv==1.0.1       # Load .env for API keys in development
+pydantic==2.8.2            # Data validation for policy schemas
+numpy==1.26.4              # Numerical ops (sentence-transformers dep)

@@ -1,0 +1,34 @@
+{
+  "policy_id": "DELHI-POLICE-001",
+  "policy_version": "1.0",
+  "group": "law_enforcement",
+  "description": "Delhi Police Sensitive Information Policy",
+  "severity": "CRITICAL",
+  "active": true,
+  "rules": [
+    {
+      "rule_id": "DP-001",
+      "description": "Informant identities and witness protection details are CRITICAL — any leak risks lives",
+      "keywords": [
+        "informant", "source name", "witness identity",
+        "protected witness", "undercover", "mukhbir"
+      ]
+    },
+    {
+      "rule_id": "DP-002",
+      "description": "Ongoing operation details, raid plans, and surveillance data must never leave secure systems",
+      "keywords": [
+        "operation name", "raid timing", "surveillance target",
+        "nakabandi", "patrolling route", "PCR deployment"
+      ]
+    },
+    {
+      "rule_id": "DP-003",
+      "description": "CCTNS database exports containing citizen criminal records are restricted",
+      "keywords": [
+        "CCTNS", "criminal record", "history sheeter",
+        "rowdy sheeter", "bail condition", "remand"
+      ]
+    }
+  ]
+}
