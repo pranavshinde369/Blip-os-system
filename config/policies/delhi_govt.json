@@ -1,0 +1,74 @@
+{
+  "policy_id": "DELHI-GOVT-001",
+  "policy_version": "1.0",
+  "group": "government",
+  "description": "Delhi Government Data Protection Policy — DPDP Act 2023",
+  "severity": "CRITICAL",
+  "active": true,
+  "rules": [
+    {
+      "rule_id": "DG-001",
+      "description": "Citizen Aadhaar numbers from MCD, DJB, or DSIIDC databases must never be copied to external applications",
+      "keywords": [
+        "aadhaar", "uid", "unique identification",
+        "citizen id", "resident id"
+      ]
+    },
+    {
+      "rule_id": "DG-002",
+      "description": "FIR details, victim information, and case numbers from Delhi Police systems are classified restricted",
+      "keywords": [
+        "FIR number", "case number", "victim name",
+        "accused", "chargesheet", "Delhi Police internal"
+      ]
+    },
+    {
+      "rule_id": "DG-003",
+      "description": "Salary, pension, and payroll data of Delhi Government employees must not leave official systems",
+      "keywords": [
+        "basic pay", "DA allowance", "payslip",
+        "pension amount", "employee code", "GPF"
+      ]
+    },
+    {
+      "rule_id": "DG-004",
+      "description": "Delhi Jal Board and PWD internal network credentials and infrastructure details are classified",
+      "keywords": [
+        "SCADA", "pipeline pressure", "water treatment",
+        "internal IP", "PWD portal", "DJB system password"
+      ]
+    },
+    {
+      "rule_id": "DG-005",
+      "description": "Land records, property registry data, and DDA allotment details containing citizen PII are restricted",
+      "keywords": [
+        "khasra number", "khatauni", "property ID",
+        "DDA allotment", "registry details", "circle rate"
+      ]
+    },
+    {
+      "rule_id": "DG-006",
+      "description": "Health records from Delhi government hospitals and mohalla clinics are protected under DPDP Act",
+      "keywords": [
+        "patient ID", "OPD number", "diagnosis",
+        "prescription", "mohalla clinic", "LNJP record"
+      ]
+    },
+    {
+      "rule_id": "DG-007",
+      "description": "Tender documents, contractor bids, and procurement data before public announcement are classified",
+      "keywords": [
+        "tender amount", "L1 bidder", "contractor quote",
+        "procurement value", "GeM order", "PWD contract"
+      ]
+    },
+    {
+      "rule_id": "DG-008",
+      "description": "Voter data, electoral roll information, and booth-level officer assignments are election commission restricted",
+      "keywords": [
+        "voter ID", "EPIC number", "booth number",
+        "BLO assignment", "electoral roll", "polling station"
+      ]
+    }
+  ]
+}

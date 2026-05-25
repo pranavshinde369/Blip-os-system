@@ -1,0 +1,137 @@
+{
+  "_comment": "BLIP ENDPOINT SENTINEL — Master Configuration File",
+  "_version": "1.0.0",
+
+  "sentinel": {
+    "daemon_name": "BlipSentinel",
+    "version": "1.0.0",
+    "poll_interval_ms": 500,
+    "shadow_mode": false,
+    "demo_mode": false,
+    "log_level": "INFO"
+  },
+
+  "user": {
+    "user_id": "emp001@delhi.gov.in",
+    "department": "MCD",
+    "designation": "Junior Assistant",
+    "hostname": "MCD-WS-04412",
+    "clearance_level": "L2"
+  },
+
+  "departments": [
+    "Delhi Secretariat",
+    "Delhi Police",
+    "MCD",
+    "Delhi Jal Board",
+    "PWD",
+    "DDA",
+    "DSIIDC",
+    "Health Department",
+    "Education Department",
+    "Transport Department"
+  ],
+
+  "thresholds": {
+    "rag_distance_flag": 0.45,
+    "risk_score_allow": 30,
+    "risk_score_warn": 60,
+    "risk_score_sanitize": 85,
+    "risk_score_block": 86,
+    "threat_cache_size": 256,
+    "max_clipboard_size_kb": 512
+  },
+
+  "risk_weights": {
+    "regex_hit": 40,
+    "rag_match_close": 50,
+    "rag_match_medium": 25,
+    "vision_flag": 35,
+    "anomaly_flag": 15,
+    "after_hours": 10,
+    "sensitive_process": 20
+  },
+
+  "ai": {
+    "gemini_api_key": "YOUR_GEMINI_API_KEY_HERE",
+    "gemini_text_model": "gemini-1.5-flash",
+    "gemini_vision_model": "gemini-1.5-flash",
+    "gemini_timeout_seconds": 10,
+    "offline_fallback": true
+  },
+
+  "rag": {
+    "model_name": "all-MiniLM-L6-v2",
+    "chroma_persist_dir": "./data/chroma_db",
+    "collection_name": "company_policies",
+    "top_k_results": 3
+  },
+
+  "audit": {
+    "log_path": "./data/logs/threats.json.enc",
+    "key_path": "./config/sentinel.key",
+    "zero_knowledge": true,
+    "max_log_entries": 10000,
+    "rotate_after_days": 30
+  },
+
+  "notifications": {
+    "email_enabled": false,
+    "smtp_host": "smtp.gmail.com",
+    "smtp_port": 587,
+    "smtp_user": "sentinel@company.com",
+    "smtp_password": "YOUR_SMTP_PASSWORD_HERE",
+    "admin_email": "admin@company.com",
+    "telegram_enabled": false,
+    "telegram_bot_token": "YOUR_TELEGRAM_BOT_TOKEN_HERE",
+    "telegram_chat_id": "YOUR_CHAT_ID_HERE",
+    "pushover_enabled": false,
+    "pushover_token": "YOUR_PUSHOVER_TOKEN_HERE",
+    "pushover_user": "YOUR_PUSHOVER_USER_HERE",
+    "notify_on": ["HARD_BLOCK", "CRITICAL"]
+  },
+
+  "totp": {
+    "enabled": true,
+    "secret_path": "./config/totp.secret",
+    "issuer": "BlipSentinel",
+    "digits": 6,
+    "interval": 30
+  },
+
+  "behavioral": {
+    "enabled": true,
+    "learning_period_days": 3,
+    "profiles_dir": "./behavioral/profiles",
+    "anomaly_sensitivity": 0.7
+  },
+
+  "processes": {
+    "sensitive": [
+      "excel.exe", "winword.exe", "outlook.exe",
+      "chrome.exe", "firefox.exe", "code.exe",
+      "dbeaver.exe", "datagrip.exe", "postman.exe"
+    ],
+    "trusted": [
+      "notepad.exe", "calculator.exe"
+    ]
+  },
+
+  "ui": {
+    "theme": "dark",
+    "accent_color": "#6C63FF",
+    "popup_timeout_seconds": 30,
+    "show_risk_score": true,
+    "show_policy_detail": true,
+    "admin_dashboard_port": 0
+  },
+
+  "compliance": {
+    "framework": "DPDP",
+    "sub_framework": "Delhi_Govt_IT_Policy_2023",
+    "organization": "Government of NCT of Delhi",
+    "nodal_officer": "CISO, Delhi Secretariat",
+    "report_output_dir": "./data/reports",
+    "data_retention_days": 90
+  }
+}
