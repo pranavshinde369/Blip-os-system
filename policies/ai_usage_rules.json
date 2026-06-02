@@ -1,0 +1,116 @@
+{
+  "company": "NovaTech Solutions Pvt. Ltd.",
+  "policy_version": "3.2",
+  "rules": [
+    {
+      "id": "R001",
+      "name": "API Key / Credential Exposure",
+      "severity": "CRITICAL",
+      "action": "block",
+      "description": "Detects API keys, secret keys, tokens, and credentials being sent to external AI services.",
+      "keywords": [
+        "sk-", "sk-proj-", "pk-", "rk-", "AKIA", "bearer", "api_key", "apikey",
+        "secret_key", "private_key", "access_token", "auth_token", "oauth_token",
+        "password=", "passwd=", "pwd=", "token=", "secret=", "credential",
+        "-----BEGIN RSA PRIVATE KEY-----", "-----BEGIN PRIVATE KEY-----",
+        "Authorization: Bearer", "x-api-key"
+      ],
+      "mitre_technique": "T1552.001",
+      "mitre_tactic": "Credential Access",
+      "compliance": ["GDPR Article 32", "IT Act India Section 43A", "ISO 27001 A.9"]
+    },
+    {
+      "id": "R002",
+      "name": "Customer PII Transmission",
+      "severity": "HIGH",
+      "action": "block",
+      "description": "Detects Aadhaar numbers, PAN cards, customer emails, and other PII being sent to AI tools.",
+      "keywords": [
+        "aadhaar", "aadhar", "pan card", "pancard", "customer_id", "user_id",
+        "date of birth", "dob", "phone number", "mobile number", "account_number",
+        "credit card", "debit card", "bank account", "ifsc", "iban"
+      ],
+      "mitre_technique": "T1213",
+      "mitre_tactic": "Collection",
+      "compliance": ["GDPR Article 5", "IT Act India Section 43A", "PCI-DSS 3.2"]
+    },
+    {
+      "id": "R003",
+      "name": "Source Code Exfiltration",
+      "severity": "CRITICAL",
+      "action": "block",
+      "description": "Detects NovaTech internal source code being pasted into AI coding assistants.",
+      "keywords": [
+        "novatech-core", "falcon-engine", "orion-platform", "payments-service",
+        "novatech-internal", "Project Falcon", "Project Orion", "vault.novatech.internal",
+        "novatech.internal", "internal.novatech", "falcon_engine", "orion_platform"
+      ],
+      "mitre_technique": "T1213.003",
+      "mitre_tactic": "Collection",
+      "compliance": ["ISO 27001 A.18", "NovaTech IP Policy Section 5"]
+    },
+    {
+      "id": "R004",
+      "name": "Financial Data Leak",
+      "severity": "HIGH",
+      "action": "sanitize",
+      "description": "Detects pre-disclosure financial data including revenue, EBITDA, investor data.",
+      "keywords": [
+        "revenue forecast", "quarterly revenue", "ebitda", "gross margin",
+        "burn rate", "runway", "series c", "series d", "investor deck",
+        "m&a", "acquisition target", "due diligence", "data room",
+        "financial projection", "earnings", "churn rate", "ltv", "cac"
+      ],
+      "mitre_technique": "T1213",
+      "mitre_tactic": "Collection",
+      "compliance": ["SEBI Insider Trading Regulations", "Companies Act 2013"]
+    },
+    {
+      "id": "R005",
+      "name": "SCADA / OT Configuration Leak",
+      "severity": "CRITICAL",
+      "action": "block",
+      "description": "Detects industrial control system and SCADA configuration data.",
+      "keywords": [
+        "scada", "plc", "hmi", "modbus", "dnp3", "iec 61850", "ot network",
+        "industrial control", "control system", "rtu", "dcs", "historian",
+        "ladder logic", "function block", "setpoint", "pid controller",
+        "industrial protocol", "fieldbus", "profibus", "ethernet/ip"
+      ],
+      "mitre_technique": "T0882",
+      "mitre_tactic": "Collection (ICS)",
+      "compliance": ["IEC 62443", "NIST SP 800-82", "NovaTech OT Security Policy"]
+    },
+    {
+      "id": "R006",
+      "name": "HR and Employee Data",
+      "severity": "HIGH",
+      "action": "block",
+      "description": "Detects employee PII, salary data, HR case information.",
+      "keywords": [
+        "salary", "compensation", "performance review", "hr case", "disciplinary",
+        "termination", "employee id", "emp_id", "payroll", "ctc",
+        "annual package", "appraisal", "promotion decision", "pip"
+      ],
+      "mitre_technique": "T1213",
+      "mitre_tactic": "Collection",
+      "compliance": ["IT Act India Section 43A", "GDPR Article 9"]
+    },
+    {
+      "id": "R007",
+      "name": "Database Connection Strings",
+      "severity": "CRITICAL",
+      "action": "block",
+      "description": "Detects database URIs, connection strings, and internal hostnames.",
+      "keywords": [
+        "postgresql://", "mysql://", "mongodb://", "redis://", "jdbc:",
+        "Server=", "Database=", "Password=", "Data Source=",
+        "connection_string", "db_password", "database_url", "DB_URL",
+        "prod-db", "production-database", "db.novatech.internal"
+      ],
+      "mitre_technique": "T1552.001",
+      "mitre_tactic": "Credential Access",
+      "compliance": ["ISO 27001 A.9", "NovaTech Credential Policy Section 3"]
+    }
+  ]
+}
