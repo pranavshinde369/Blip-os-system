@@ -1,0 +1,155 @@
+NOVATECH SOLUTIONS PVT. LTD.
+DATA SECURITY AND ACCEPTABLE USE POLICY
+Version 3.2 | Effective: January 2025
+Approved by: CISO — Rahul Menon
+
+========================================
+SECTION 1 — DATA CLASSIFICATION
+========================================
+
+NovaTech classifies all company data into four tiers:
+
+TIER 1 — PUBLIC: Press releases, marketing materials, published documentation.
+No restrictions on sharing or transmission.
+
+TIER 2 — INTERNAL: Internal memos, org charts, meeting notes, general process
+documents. May be shared within the organisation. Must not be sent to personal
+email or external AI tools without approval.
+
+TIER 3 — CONFIDENTIAL: Customer contracts, financial forecasts, product
+roadmaps, pricing models, HR records, and legal documents. Must not be shared
+outside the organisation under any circumstances. Must not be pasted into any
+AI tool, chatbot, or LLM-based system.
+
+TIER 4 — RESTRICTED: Source code from core product repositories
+(NovaTech Core, Project Falcon, Project Orion), SCADA and OT system
+configurations, cryptographic keys, authentication credentials, API keys,
+database connection strings, and personally identifiable information (PII)
+of employees or customers. This data must never leave the corporate network.
+Transmission of TIER 4 data via any external channel including AI tools,
+personal devices, or cloud storage is a terminable offence.
+
+========================================
+SECTION 2 — PROHIBITED AI TOOL USAGE
+========================================
+
+NovaTech employees are strictly prohibited from using external AI systems
+including but not limited to OpenAI ChatGPT, Google Gemini, Anthropic Claude,
+Perplexity, Mistral, Groq, Meta LLaMA, and any other large language model
+service to process the following types of data:
+
+- Customer names, Aadhaar numbers, PAN card numbers, phone numbers, email
+  addresses, or any personally identifiable information
+- Employee salary information, performance reviews, or HR case details
+- Financial projections, revenue forecasts, quarterly results before public
+  disclosure, investor presentations, or M&A discussions
+- API keys, OAuth tokens, bearer tokens, secret keys, private keys, database
+  passwords, or any authentication credential
+- NovaTech product roadmap details, unreleased feature specifications,
+  competitive strategy documents, or Project Falcon and Project Orion details
+- Customer contracts, SLA agreements, NDAs, or any legally privileged document
+- SCADA configuration files, OT network diagrams, industrial control parameters,
+  or any operational technology data
+
+Violation of this policy constitutes a serious breach of employment terms and
+may result in disciplinary action up to and including immediate termination.
+
+========================================
+SECTION 3 — CREDENTIAL AND KEY MANAGEMENT
+========================================
+
+All API keys, service account credentials, database passwords, and
+authentication tokens must be stored exclusively in NovaTech's approved
+secrets management system (HashiCorp Vault at vault.novatech.internal).
+
+API keys must never be:
+- Hardcoded in source code repositories
+- Shared via email, Slack, or any messaging platform
+- Pasted into AI tools or chatbots
+- Stored in plain text files on employee machines
+- Transmitted outside the corporate network
+
+Any key beginning with sk-, pk-, rk-, AKIA, or similar vendor prefixes is
+considered a live credential and must be treated as TIER 4 data.
+
+If an API key or credential is suspected to have been exposed, employees must
+immediately notify security@novatech.internal and rotate the credential within
+one hour.
+
+========================================
+SECTION 4 — CUSTOMER DATA PROTECTION
+========================================
+
+NovaTech processes personal data of over 2.4 million registered users and
+enterprise customers across 14 countries. All customer data is subject to
+GDPR (EU), IT Act India Section 43A, and applicable local data protection laws.
+
+Employees handling customer data must:
+- Process data only on approved NovaTech systems
+- Never copy customer records to personal machines or cloud accounts
+- Never share customer PII with third-party AI services
+- Report any suspected data breach to the DPO within 72 hours
+
+Customer identifiers including customer_id, user_id, account_number, and
+associated PII fields (name, email, phone, address, date of birth, payment
+information) are classified as TIER 3 or higher and fully protected
+under this policy.
+
+========================================
+SECTION 5 — SOURCE CODE AND IP PROTECTION
+========================================
+
+NovaTech intellectual property includes all source code, algorithms,
+architecture documents, and technical specifications. The following
+repositories are classified TIER 4 RESTRICTED:
+
+- github.com/novatech-internal/novatech-core
+- github.com/novatech-internal/falcon-engine
+- github.com/novatech-internal/orion-platform
+- github.com/novatech-internal/payments-service
+- All internal microservice repositories under the novatech-internal GitHub org
+
+Employees must not paste source code from these repositories into any
+external AI coding assistant including GitHub Copilot, ChatGPT, Claude,
+Cursor, or any similar tool without enterprise DLP controls in place.
+
+========================================
+SECTION 6 — FINANCIAL AND STRATEGIC DATA
+========================================
+
+The following data categories are TIER 3 CONFIDENTIAL and must not be
+transmitted outside secure NovaTech systems:
+
+- Quarterly revenue figures before earnings call publication
+- EBITDA, gross margin, burn rate, or runway figures not yet disclosed
+- Customer acquisition cost, lifetime value, or churn metrics marked internal
+- Project Falcon launch timeline, pricing, or partner details
+- NovaTech Series C and Series D funding discussions and investor data room contents
+- Any M&A target names, deal terms, or due diligence materials
+
+========================================
+SECTION 7 — INCIDENT RESPONSE
+========================================
+
+If an employee suspects that sensitive data has been inadvertently transmitted
+to an external AI tool or service, they must:
+
+1. Stop using the AI tool immediately
+2. Document what was sent and to which service
+3. Notify security@novatech.internal within 30 minutes
+4. Complete a formal Incident Report in the NovaTech GRC portal
+5. Cooperate fully with any subsequent security investigation
+
+========================================
+SECTION 8 — MONITORING AND ENFORCEMENT
+========================================
+
+NovaTech reserves the right to monitor all data transmitted on corporate
+networks and corporate-managed devices. Employees have no expectation of
+privacy when using company-provided systems.
+
+NovaTech operates automated data loss prevention tooling that scans outbound
+traffic for policy violations. Repeated violations will be escalated to HR.
+
+Policy questions: security@novatech.internal
+Emergency hotline: +91-20-6600-SAFE (7233)
