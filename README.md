@@ -1,4 +1,4 @@
-# 🛡️ Blip — Policy-Native GenAI Firewall
+# 🛡️ Blip — Policy-Native GenAI Firewall.
 
 > **WitchHunt 2026 Hackathon Submission**
 > Local, air-gap-compatible DLP for the GenAI era. Intercepts AI-bound prompts *before* they leave the machine — at the network layer and the clipboard.
